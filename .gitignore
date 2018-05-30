@@ -1,3 +1,5 @@
+# gitignore found at https://github.com/flutter/flutter/blob/master/.gitignore
+
 # Miscellaneous
 *.class
 *.lock
