@@ -116,21 +116,21 @@ class _UpvoteWidget extends StatelessWidget {
         new GestureDetector(
           child: new Icon(Icons.keyboard_arrow_up,
             color: (userVoteStatus > 0)
-                ? upvoteColor
+                ? LeafColors.upvote_color
                 : null,),
           onTap: () => _votePress(1),
         ),
         new Text(voteCount.toString(),
           style: new TextStyle(
-            color: (userVoteStatus > 0) ? upvoteColor : ((userVoteStatus < 0)
-                ? downvoteColor
+            color: (userVoteStatus > 0) ? LeafColors.upvote_color : ((userVoteStatus < 0)
+                ? LeafColors.downvote_color
                 : null),
           ),
         ),
         new GestureDetector(
           child: new Icon(Icons.keyboard_arrow_down,
             color: (userVoteStatus < 0)
-                ? downvoteColor
+                ? LeafColors.downvote_color
                 : null,
           ),
           onTap: () => _votePress(-1),
