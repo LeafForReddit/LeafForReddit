@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'home.dart';
+import 'package:leaf_for_reddit/ui/home.dart';
 import 'user_services.dart';
 
 void main() => runApp(new MyApp());

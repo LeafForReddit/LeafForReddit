@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'overlays.dart';
+import 'package:leaf_for_reddit/ui/overlays.dart';
 
 class BottomBarWidget extends StatelessWidget {
   @override
