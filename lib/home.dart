@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'sub_list.dart';
 import 'user_profile.dart';
-
 import 'user_services.dart';
+import 'bottom_bar.dart';
+import 'overlays.dart';
 
 class Home extends StatefulWidget {
   final UserInformationManager _infoManager = null;
@@ -28,7 +29,8 @@ class _HomeState extends State<Home> {
           new IconButton(
             icon: new Icon(Icons.account_circle, color: Colors.white,),
             onPressed: () =>
-                _summonModal(child: new UserOptionsWidget(widget._infoManager)),
+                BottomSheetTemplate.summonModal(
+                    context, child: new UserOptionsWidget(widget._infoManager)),
           ),
         ],
       ),
@@ -37,50 +39,7 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: new _ActionBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _bottomBar(),
-    );
-  }
-
-  void _summonModal({Widget child}) {
-    showModalBottomSheet(context: context, builder: (BuildContext context) {
-      return new _BottomSheetTemplate(child: child,);
-    });
-  }
-
-  BottomAppBar _bottomBar() {
-    Widget itemFactory(String label, IconData icon) {
-      return new IconButton(
-        icon: new Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            new Icon(icon),
-            new Expanded(
-              child: new FittedBox(
-                child: new Text(label),
-                fit: BoxFit.fill,
-              ),
-            ),
-          ],
-        ),
-        onPressed: _summonModal,
-      );
-    }
-
-    return new BottomAppBar(
-      hasNotch: false,
-      child: new Container(
-        color: Colors.white,
-        height: 56.0,
-        alignment: Alignment.center,
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            itemFactory('TABS', Icons.view_carousel),
-            itemFactory('SUBS', Icons.list),
-          ],
-        ),
-      ),
+      bottomNavigationBar: new BottomBarWidget(),
     );
   }
 }
@@ -116,15 +75,4 @@ class _ActionBar extends StatelessWidget {
   }
 }
 
-class _BottomSheetTemplate extends StatelessWidget {
-  final Widget child;
 
-  _BottomSheetTemplate({this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return new Container(
-      child: child,
-    );
-  }
-}
