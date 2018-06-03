@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'sub_list.dart';
-import 'user_profile.dart';
-import 'user_services.dart';
-import 'bottom_bar.dart';
-import 'overlays.dart';
+import 'package:leaf_for_reddit/ui/bottom_bar.dart';
+import 'package:leaf_for_reddit/ui/overlays.dart';
+import 'package:leaf_for_reddit/ui/sub_list.dart';
+import 'package:leaf_for_reddit/ui/user_profile.dart';
+import 'package:leaf_for_reddit/user_services.dart';
 
 class Home extends StatefulWidget {
   final UserInformationManager _infoManager = null;

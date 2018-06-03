@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:leaf_for_reddit/user_services.dart';
 
-import 'user_services.dart';
 
 class UserOptionsWidget extends StatelessWidget {
-  UserInformationManager _infoManager;
+  final UserInformationManager _infoManager;
 
   UserOptionsWidget(this._infoManager);
 
