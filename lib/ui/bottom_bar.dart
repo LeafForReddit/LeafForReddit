@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:leaf_for_reddit/ui/actionable_interface.dart';
 import 'package:leaf_for_reddit/ui/overlays.dart';
 
 class BottomBarWidget extends StatelessWidget {
@@ -43,7 +44,7 @@ class BottomBarOption {
   }
 }
 
-abstract class BottomBarButton extends StatelessWidget {
+class BottomBarButton extends StatelessWidget implements Actionable {
   final BottomBarOption option;
 
   @override
@@ -72,7 +73,7 @@ abstract class BottomBarButton extends StatelessWidget {
         button = new _SubListButton(option);
         break;
       default:
-        button = new _ActionlessButton(option);
+        button = new BottomBarButton._(option);
     }
 
     return button;
@@ -80,7 +81,10 @@ abstract class BottomBarButton extends StatelessWidget {
 
   BottomBarButton._(this.option);
 
-  void action({BuildContext context});
+  @override
+  void action({@required BuildContext context}){
+    return null;
+  }
 }
 
 class _SubListButton extends BottomBarButton {
@@ -92,11 +96,3 @@ class _SubListButton extends BottomBarButton {
   }
 }
 
-class _ActionlessButton extends BottomBarButton {
-  _ActionlessButton(BottomBarOption option) : super._(option);
-
-  @override
-  void action({BuildContext context}) {
-    return null;
-  }
-}
