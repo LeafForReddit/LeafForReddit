@@ -4,10 +4,10 @@ import 'package:leaf_for_reddit/ui/bottom_bar.dart';
 import 'package:leaf_for_reddit/ui/overlays.dart';
 import 'package:leaf_for_reddit/ui/sub_list.dart';
 import 'package:leaf_for_reddit/ui/user_profile.dart';
-import 'package:leaf_for_reddit/user_services.dart';
+import 'package:leaf_for_reddit/ui/bloc/user_service.dart';
 
 class Home extends StatefulWidget {
-  final UserInformationManager _infoManager = null;
+  final UserInformationManager _infoManager = UserInformationManager();
 
   // TODO Add dependency on _infoManager once inpplementation is done
   Home({Key key}) : super(key: key);
