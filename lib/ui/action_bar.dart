@@ -14,9 +14,9 @@ class ActionBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            new ActionBarButton(ActionBarOption.ClearAll),
-            new ActionBarButton(ActionBarOption.Refresh),
-            new ActionBarButton(ActionBarOption.Sidebar),
+            new ActionBarButton(ActionBarOption.clearAll),
+            new ActionBarButton(ActionBarOption.refresh),
+            new ActionBarButton(ActionBarOption.sidebar),
           ],
         ),
       ),
@@ -26,17 +26,17 @@ class ActionBar extends StatelessWidget {
   }
 }
 
-class ActionBarOption {
-  static const Refresh = Icons.refresh;
-  static const ClearAll = Icons.clear_all;
-  static const Sidebar = Icons.info_outline;
+abstract class ActionBarOption {
+  static const refresh = Icons.refresh;
+  static const clearAll = Icons.clear_all;
+  static const sidebar = Icons.info_outline;
 }
 
 class ActionBarButton extends StatelessWidget implements Actionable {
   final IconData _icon;
 
   static Map<IconData, Function> _constructorMap = <IconData, Function>{
-    ActionBarOption.Sidebar : (icon) => SidebarButton(icon),
+    ActionBarOption.sidebar : (icon) => _SidebarButton(icon),
   };
 
   @override
@@ -63,8 +63,8 @@ class ActionBarButton extends StatelessWidget implements Actionable {
   }
 }
 
-class SidebarButton extends ActionBarButton {
-  SidebarButton(IconData icon) : super._(icon);
+class _SidebarButton extends ActionBarButton {
+  _SidebarButton(IconData icon) : super._(icon);
 
   @override
   void action({BuildContext context}) {
