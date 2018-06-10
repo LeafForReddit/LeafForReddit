@@ -14,6 +14,12 @@ dependencies:
   shared_preferences: ^0.4.1
   transparent_image: ^0.1.0
   rxdart: ^0.16.0+2
+  uuid: 1.0.0
+
+  reddit:
+    git:
+      url: git://github.com/LeafForReddit/dart-reddit
+      ref: implicit_flow
 
 dev_dependencies:
   flutter_test:
