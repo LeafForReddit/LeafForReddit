@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:leaf_for_reddit/api/reddit_oauth_config.dart';
+import 'package:leaf_for_reddit/api/reddit_client.dart';
 import 'package:leaf_for_reddit/ui/action_bar.dart';
 import 'package:leaf_for_reddit/ui/bottom_bar.dart';
 import 'package:leaf_for_reddit/ui/overlays.dart';
@@ -8,6 +10,7 @@ import 'package:leaf_for_reddit/ui/bloc/user_service.dart';
 
 class Home extends StatefulWidget {
   final UserInformationManager _infoManager = UserInformationManager();
+  final RedditClient client = new RedditClient(RedditOAuthConfig());
 
   // TODO Add dependency on _infoManager once inpplementation is done
   Home({Key key}) : super(key: key);
@@ -21,6 +24,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    widget.client.fetchSubreddit('');
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(title),
