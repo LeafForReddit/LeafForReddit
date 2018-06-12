@@ -10,9 +10,8 @@ import 'package:leaf_for_reddit/ui/bloc/user_service.dart';
 
 class Home extends StatefulWidget {
   final UserInformationManager _infoManager = UserInformationManager();
-  final RedditClient client = new RedditClient(RedditOAuthConfig());
 
-  // TODO Add dependency on _infoManager once inpplementation is done
+  // TODO Add dependency on _infoManager once implementation is done
   Home({Key key}) : super(key: key);
 
   @override
@@ -20,14 +19,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String title = 'Leaf';
+  String _title = 'Leaf';
 
   @override
   Widget build(BuildContext context) {
-    widget.client.fetchSubreddit('');
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(title),
+        title: new Text(_title),
         centerTitle: true,
         actions: <Widget>[
           new IconButton(
@@ -39,13 +37,15 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: new Center(
-        child: new SubList(),
+        child: new SubList(new RedditClient(RedditOAuthConfig())),
       ),
       floatingActionButton: new ActionBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: new BottomBarWidget(),
     );
   }
+
+  void newTitle(String newTitle) => setState(() => _title = newTitle);
 }
 
 
