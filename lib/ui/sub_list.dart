@@ -52,7 +52,7 @@ class _FeedItemState extends State<FeedItem> {
         minHeight: 120.0,
       ),
       child: new Container(
-        padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: new Row(
           children: <Widget>[
             new _UpvoteWidget(
@@ -96,39 +96,43 @@ class TextBlockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      verticalDirection: VerticalDirection.down,
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        new Text(
-          '$_subreddit by $_poster',
-          style: TextStyle(
-            fontSize: 10.0,
-            color: Colors.grey,
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-        new Container(
-          child: new Text(
-            _title,
+    return Expanded(
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        verticalDirection: VerticalDirection.down,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          new Text(
+            '$_subreddit by $_poster',
             style: TextStyle(
-              fontSize: 16.0,
+              fontSize: 10.0,
+              color: Colors.grey,
             ),
-            softWrap: true,
-            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        new Text(
-          '${_commentNo.toString()} comments * ${_calcElapsedTime(_posted)}',
-          style: TextStyle(
-            fontSize: 10.0,
-            color: Colors.grey,
-            fontStyle: FontStyle.italic,
+          new Container(
+            child: new Text(
+              _title,
+              style: TextStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.bold,
+              ),
+              softWrap: true,
+              maxLines: 10,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        )
-      ],
+          new Text(
+            '${_commentNo.toString()} comments * ${_calcElapsedTime(_posted)}',
+            style: TextStyle(
+              fontSize: 10.0,
+              color: Colors.grey,
+              fontStyle: FontStyle.italic,
+            ),
+          )
+        ],
+      ),
     );
   }
 
