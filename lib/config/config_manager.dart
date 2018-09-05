@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfigManager {
