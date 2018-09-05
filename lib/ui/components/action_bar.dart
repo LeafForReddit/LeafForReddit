@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leaf_for_reddit/ui/actionable_interface.dart';
-import 'package:leaf_for_reddit/ui/overlays.dart';
+import 'package:leaf_for_reddit/ui/components/overlays.dart';
 
 class ActionBar extends StatelessWidget {
   @override

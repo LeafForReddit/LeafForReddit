@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:leaf_for_reddit/ui/actionable_interface.dart';
-import 'package:leaf_for_reddit/ui/overlays.dart';
+import 'package:leaf_for_reddit/ui/components/overlays.dart';
 
 class BottomBarWidget extends StatelessWidget {
+  final ValueChanged<String> changeTitle;
+
+  BottomBarWidget({this.changeTitle});
+
   @override
   Widget build(BuildContext context) {
     return new BottomAppBar(
@@ -16,7 +20,10 @@ class BottomBarWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             new BottomBarButton(new BottomBarOption(BottomBarOption.Tabs)),
-            new BottomBarButton(new BottomBarOption(BottomBarOption.Subs)),
+            new BottomBarButton(
+              new BottomBarOption(BottomBarOption.Subs),
+              callback: changeTitle,
+            ),
           ],
         ),
       ),
@@ -24,6 +31,7 @@ class BottomBarWidget extends StatelessWidget {
   }
 }
 
+// TODO Switch to map lookup like actionbar for constructor
 class BottomBarOption {
   static const Tabs = 'TABS';
   static const Subs = 'SUBS';
@@ -39,8 +47,7 @@ class BottomBarOption {
   BottomBarOption._internal(this.label, this.icon);
 
   factory BottomBarOption(String option) {
-    return new BottomBarOption._internal(
-        option, _iconMap[option]);
+    return new BottomBarOption._internal(option, _iconMap[option]);
   }
 }
 
@@ -66,11 +73,14 @@ class BottomBarButton extends StatelessWidget implements Actionable {
     );
   }
 
-  factory BottomBarButton(BottomBarOption option) {
+  factory BottomBarButton(BottomBarOption option, {ValueChanged<String> callback}) {
     BottomBarButton button;
     switch (option.label) {
       case BottomBarOption.Subs:
-        button = new _SubListButton(option);
+        button = new _SubListButton(
+          option,
+          changeTitle: callback,
+        );
         break;
       default:
         button = new BottomBarButton._(option);
@@ -82,17 +92,18 @@ class BottomBarButton extends StatelessWidget implements Actionable {
   BottomBarButton._(this.option);
 
   @override
-  void action({@required BuildContext context}){
+  void action({@required BuildContext context}) {
     return null;
   }
 }
 
 class _SubListButton extends BottomBarButton {
-  _SubListButton(BottomBarOption option) : super._(option);
+  final ValueChanged<String> changeTitle;
+
+  _SubListButton(BottomBarOption option, {this.changeTitle}) : super._(option);
 
   @override
   void action({@required BuildContext context}) {
     return BottomSheetTemplate.summonModal(context);
   }
 }
-
