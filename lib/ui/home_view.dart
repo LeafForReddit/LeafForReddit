@@ -13,7 +13,6 @@ class Home extends StatelessWidget {
   final HomeBloc _homeBloc;
   final void Function(BuildContext bContext) _iconButtonAction;
 
-  // TODO Add dependency on _infoManager once implementation is done
   Home(this._homeBloc, this._iconButtonAction, {Key key}) : super(key: key);
 
   @override
