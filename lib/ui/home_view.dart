@@ -60,6 +60,7 @@ class HomeBloc {
   }
 
   void _setSubredditResult(String title) async {
+    _titleSubject.add(title);
     await _futureReddit;
     Reddit reddit = await _futureReddit;
     List<FeedItemBloc> results = await reddit
