@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leaf_for_reddit/config/config_manager.dart';
 import 'package:leaf_for_reddit/ui/bloc/user_service.dart';
 
 class UserOptionsWidget extends StatelessWidget {
