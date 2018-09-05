@@ -11,15 +11,13 @@ class RedditService {
 
   RedditService(Reddit reddit, this._config, SessionService sessionService) {
     reddit.authSetup(_config.clientId);
-    sessionService.currentDeviceId
-        .listen((deviceId) => _finishAuth(deviceId, reddit: reddit));
+    sessionService.currentUser
+        .listen((user) => _finishAuth(user.deviceId, reddit: reddit));
   }
 
   void _finishAuth(String deviceId, {Reddit reddit}) async {
     Reddit toAuth = reddit ?? (await _reddit.value);
-//    print('Auth: ' + toAuth.toString());
     _reddit.add(toAuth.authFinish(deviceId: deviceId));
-//    print('Reddit: ' + reddit.toString());
   }
 
   Stream<Future<Reddit>> get redditStream => _reddit.stream;

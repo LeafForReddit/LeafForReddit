@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:leaf_for_reddit/ui/bloc/user_service.dart';
+import 'package:leaf_for_reddit/service/session_service.dart';
+import 'package:rxdart/subjects.dart';
 
-class UserOptionsWidget extends StatelessWidget {
-  final UserInformationManager _infoManager;
+class UserPageWidget extends StatelessWidget {
+  UserPageBloc _userPageBloc;
 
-  UserOptionsWidget(this._infoManager);
+  UserPageWidget(this._userPageBloc);
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +23,8 @@ class UserOptionsWidget extends StatelessWidget {
     return new Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-      child: StreamBuilder<User>(
-        stream: _infoManager.currentUser,
+      child: StreamBuilder<String>(
+        stream: _userPageBloc.currentUser,
         builder: (context, snapshot) => new Card(
               child: new ListTile(
                 leading: new Image.network(
@@ -30,7 +33,7 @@ class UserOptionsWidget extends StatelessWidget {
                   width: 76.0,
                 ),
                 title: Text('u/${(snapshot.data != null)
-                ? snapshot.data.username
+                ? snapshot.data
                 : 'XXXX'}'),
                 trailing: const Icon(Icons.settings),
               ),
@@ -38,4 +41,15 @@ class UserOptionsWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class UserPageBloc {
+  final _currentUserSubject = new BehaviorSubject<String>();
+
+  UserPageBloc(SessionService sessionService) {
+    sessionService.currentUser
+        .listen((user) => _currentUserSubject.add(user.username));
+  }
+
+  Stream<String> get currentUser => _currentUserSubject.stream;
 }

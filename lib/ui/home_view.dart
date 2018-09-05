@@ -3,21 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:leaf_for_reddit/service/reddit_service.dart';
 import 'package:leaf_for_reddit/service/session_service.dart';
-import 'package:leaf_for_reddit/ui/bloc/user_service.dart';
 import 'package:leaf_for_reddit/ui/components/action_bar.dart';
 import 'package:leaf_for_reddit/ui/components/bottom_bar.dart';
 import 'package:leaf_for_reddit/ui/components/feed.dart';
-import 'package:leaf_for_reddit/ui/components/overlays.dart';
-import 'package:leaf_for_reddit/ui/user_profile.dart';
 import 'package:reddit/reddit.dart';
 import 'package:rxdart/subjects.dart';
 
 class Home extends StatelessWidget {
-  final UserInformationManager _infoManager = UserInformationManager();
   final HomeBloc _homeBloc;
+  final void Function(BuildContext bContext) _iconButtonAction;
 
   // TODO Add dependency on _infoManager once implementation is done
-  Home(this._homeBloc, {Key key}) : super(key: key);
+  Home(this._homeBloc, this._iconButtonAction, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +31,7 @@ class Home extends StatelessWidget {
               Icons.account_circle,
               color: Colors.white,
             ),
-            onPressed: () => BottomSheetTemplate.summonModal(context,
-                child: new UserOptionsWidget(_infoManager)),
+            onPressed: () => _iconButtonAction(context),
           ),
         ],
       ),
@@ -61,7 +57,7 @@ class HomeBloc {
     });
 
     sessionService.currentSubreddit
-        .listen((title) => _setSubredditResult(title));
+        .listen((currentSub) => _setSubredditResult(currentSub));
   }
 
   void _setSubredditResult(String title) async {

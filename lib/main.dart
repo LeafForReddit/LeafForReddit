@@ -3,7 +3,9 @@ import 'package:http/http.dart';
 import 'package:leaf_for_reddit/config/reddit_config.dart';
 import 'package:leaf_for_reddit/service/reddit_service.dart';
 import 'package:leaf_for_reddit/service/session_service.dart';
+import 'package:leaf_for_reddit/ui/components/overlays.dart';
 import 'package:leaf_for_reddit/ui/home_view.dart';
+import 'package:leaf_for_reddit/ui/user_profile_view.dart';
 import 'package:reddit/reddit.dart';
 
 void main() => runApp(new MyApp());
@@ -27,6 +29,12 @@ class MyApp extends StatelessWidget {
             sessionService,
           ),
         ),
+        (bContext) => BottomSheetTemplate.summonModal(
+              bContext,
+              child: new UserPageWidget(
+                new UserPageBloc(sessionService),
+              ),
+            ),
       ),
     );
   }
