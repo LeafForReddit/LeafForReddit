@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class Feed extends StatelessWidget {
   final Stream<List<FeedItemBloc>> _items;
@@ -46,28 +47,40 @@ class FeedItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new ConstrainedBox(
-      constraints: new BoxConstraints(
-        minHeight: 120.0,
-      ),
-      child: new Container(
-        padding: const EdgeInsets.only(
-          left: 8.0,
-          right: 8.0,
+    return new Slidable(
+      delegate: new SlidableBehindDelegate(),
+      actionExtentRatio: 0.15,
+      child: new ConstrainedBox(
+        constraints: new BoxConstraints(
+          minHeight: 120.0,
         ),
-        child: new Row(
-          children: <Widget>[
-            new ThumbnailWidget(feedItemBloc.thumbnailUri),
-            new TextBlockWidget(
-              feedItemBloc.title,
-              feedItemBloc.subreddit,
-              feedItemBloc.poster,
-              feedItemBloc.posted,
-              0.toString(),
-            )
-          ],
+        child: new Container(
+          color: Colors.white,
+          padding: const EdgeInsets.only(
+            left: 8.0,
+            right: 8.0,
+          ),
+          child: new Row(
+            children: <Widget>[
+              new ThumbnailWidget(feedItemBloc.thumbnailUri),
+              new TextBlockWidget(
+                feedItemBloc.title,
+                feedItemBloc.subreddit,
+                feedItemBloc.poster,
+                feedItemBloc.posted,
+                0.toString(),
+              )
+            ],
+          ),
         ),
       ),
+      actions: <Widget>[
+        new IconSlideAction(icon: Icons.share),
+      ],
+      secondaryActions: <Widget>[
+        new IconSlideAction(icon: Icons.arrow_downward),
+        new IconSlideAction(icon: Icons.arrow_upward),
+      ],
     );
   }
 }
@@ -78,6 +91,7 @@ class FeedItemBloc {
   String poster;
   String posted;
   String subreddit;
+  String id;
 
   FeedItemBloc(Map<String, dynamic> feedItemData) {
     title = feedItemData[_FeedItemKeys.title];
@@ -85,6 +99,7 @@ class FeedItemBloc {
     poster = feedItemData[_FeedItemKeys.author];
     subreddit = feedItemData[_FeedItemKeys.subreddit];
     posted = _calcElapsedTime(feedItemData[_FeedItemKeys.created]);
+    id = feedItemData[_FeedItemKeys.id];
   }
 
   static String _calcElapsedTime(double epocPostTime) {
@@ -107,6 +122,7 @@ abstract class _FeedItemKeys {
   static const created = 'created_utc';
   static const commentNo = 'num_comments';
   static const likes = 'likes';
+  static const id = 'id';
 }
 
 class ThumbnailWidget extends StatelessWidget {
