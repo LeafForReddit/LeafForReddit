@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Feed extends StatelessWidget {
   final Stream<List<FeedItemBloc>> _items;
@@ -68,7 +68,7 @@ class FeedItem extends StatelessWidget {
                 feedItemBloc.subreddit,
                 feedItemBloc.poster,
                 feedItemBloc.posted,
-                0.toString(),
+                feedItemBloc.commentNo,
               )
             ],
           ),
@@ -92,6 +92,8 @@ class FeedItemBloc {
   String posted;
   String subreddit;
   String id;
+  int ups;
+  String commentNo;
 
   FeedItemBloc(Map<String, dynamic> feedItemData) {
     title = feedItemData[_FeedItemKeys.title];
@@ -100,6 +102,8 @@ class FeedItemBloc {
     subreddit = feedItemData[_FeedItemKeys.subreddit];
     posted = _calcElapsedTime(feedItemData[_FeedItemKeys.created]);
     id = feedItemData[_FeedItemKeys.id];
+    ups = feedItemData[_FeedItemKeys.ups];
+    commentNo = feedItemData[_FeedItemKeys.commentNo].toString();
   }
 
   static String _calcElapsedTime(double epocPostTime) {
