@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:share/share.dart';
 
 class Feed extends StatelessWidget {
   final Stream<List<FeedItemBloc>> _items;
@@ -41,9 +42,9 @@ class Feed extends StatelessWidget {
 }
 
 class FeedItem extends StatelessWidget {
-  final FeedItemBloc feedItemBloc;
+  final FeedItemBloc _feedItemBloc;
 
-  FeedItem(this.feedItemBloc);
+  FeedItem(this._feedItemBloc);
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +63,23 @@ class FeedItem extends StatelessWidget {
           ),
           child: new Row(
             children: <Widget>[
-              new ThumbnailWidget(feedItemBloc.thumbnailUri),
+              new ThumbnailWidget(_feedItemBloc.thumbnailUri),
               new TextBlockWidget(
-                feedItemBloc.title,
-                feedItemBloc.subreddit,
-                feedItemBloc.poster,
-                feedItemBloc.posted,
-                feedItemBloc.commentNo,
+                _feedItemBloc.title,
+                _feedItemBloc.subreddit,
+                _feedItemBloc.poster,
+                _feedItemBloc.posted,
+                _feedItemBloc.commentNo,
               )
             ],
           ),
         ),
       ),
       actions: <Widget>[
-        new IconSlideAction(icon: Icons.share),
+        new IconSlideAction(
+          icon: Icons.share,
+          onTap: () => new Share.plainText(text: _feedItemBloc.postUrl).share(),
+        ),
       ],
       secondaryActions: <Widget>[
         new IconSlideAction(icon: Icons.arrow_downward),
@@ -86,6 +90,8 @@ class FeedItem extends StatelessWidget {
 }
 
 class FeedItemBloc {
+  static final String _redditUrl = 'www.reddit.com';
+
   String title;
   String thumbnailUri;
   String poster;
@@ -94,6 +100,7 @@ class FeedItemBloc {
   String id;
   int ups;
   String commentNo;
+  String postUrl;
 
   FeedItemBloc(Map<String, dynamic> feedItemData) {
     title = feedItemData[_FeedItemKeys.title];
@@ -104,6 +111,7 @@ class FeedItemBloc {
     id = feedItemData[_FeedItemKeys.id];
     ups = feedItemData[_FeedItemKeys.ups];
     commentNo = feedItemData[_FeedItemKeys.commentNo].toString();
+    postUrl = _redditUrl + feedItemData[_FeedItemKeys.postUrl];
   }
 
   static String _calcElapsedTime(double epocPostTime) {
@@ -127,6 +135,7 @@ abstract class _FeedItemKeys {
   static const commentNo = 'num_comments';
   static const likes = 'likes';
   static const id = 'id';
+  static const postUrl = 'permalink';
 }
 
 class ThumbnailWidget extends StatelessWidget {
