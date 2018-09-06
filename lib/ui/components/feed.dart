@@ -78,7 +78,7 @@ class FeedItem extends StatelessWidget {
       actions: <Widget>[
         new IconSlideAction(
           icon: Icons.share,
-          onTap: () => new Share.plainText(text: _feedItemBloc.postUrl).share(),
+          onTap: () => _feedItemBloc.share(),
         ),
       ],
       secondaryActions: <Widget>[
@@ -122,6 +122,10 @@ class FeedItemBloc {
         .inHours;
 
     return '${diff.toString()} ${(diff == 1) ? 'hour' : 'hours'} ago';
+  }
+
+  void share() {
+    new Share.plainText(text: postUrl).share();
   }
 }
 
