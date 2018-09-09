@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:share/share.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Feed extends StatelessWidget {
   final Stream<List<FeedItemBloc>> _items;
@@ -12,67 +12,47 @@ class Feed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      padding: const EdgeInsets.only(
-        left: 16.0,
-        right: 16.0,
-      ),
-      child: new StreamBuilder(
-          stream: _items,
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-                // TODO Replace with loading screen
-                return new Container();
-              default:
-                if (snapshot.hasError) {
-                  return new Text('Error: ${snapshot.error}');
-                } else {
-                  return new ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) =>
-                        new FeedItem(snapshot.data[index]),
-                  );
-                }
+    return new StreamBuilder(
+      stream: _items,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            // TODO Replace with loading screen
+            return new Container();
+          default:
+            if (snapshot.hasError) {
+              return new Text('Error: ${snapshot.error}');
+            } else {
+              return new ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) =>
+                    new _FeedItem(snapshot.data[index]),
+              );
             }
-          }),
+        }
+      },
     );
   }
 }
 
-class FeedItem extends StatelessWidget {
+class _FeedItem extends StatelessWidget {
   final FeedItemBloc _feedItemBloc;
 
-  FeedItem(this._feedItemBloc);
+  _FeedItem(this._feedItemBloc);
 
   @override
   Widget build(BuildContext context) {
     return new Slidable(
       delegate: new SlidableBehindDelegate(),
       actionExtentRatio: 0.15,
-      child: new ConstrainedBox(
-        constraints: new BoxConstraints(
-          minHeight: 120.0,
-        ),
-        child: new Container(
-          color: Colors.white,
-          padding: const EdgeInsets.only(
-            left: 8.0,
-            right: 8.0,
-          ),
-          child: new Row(
-            children: <Widget>[
-              new ThumbnailWidget(_feedItemBloc.thumbnailUri),
-              new TextBlockWidget(
-                _feedItemBloc.title,
-                _feedItemBloc.subreddit,
-                _feedItemBloc.poster,
-                _feedItemBloc.posted,
-                _feedItemBloc.commentNo,
-              )
-            ],
-          ),
+      child: new Container(
+        color: Colors.white,
+        child: new _ListItem(
+          leading: new _ThumbnailWidget(_feedItemBloc.thumbnailUri),
+          title: new Text(_feedItemBloc.title),
+          subtitle: new Text(_feedItemBloc.subreddit),
+          trailing: new Text(_feedItemBloc.ups.toString()),
         ),
       ),
       actions: <Widget>[
@@ -142,10 +122,10 @@ abstract class _FeedItemKeys {
   static const postUrl = 'permalink';
 }
 
-class ThumbnailWidget extends StatelessWidget {
+class _ThumbnailWidget extends StatelessWidget {
   final String _imageUri;
 
-  ThumbnailWidget(this._imageUri);
+  _ThumbnailWidget(this._imageUri);
 
   @override
   Widget build(BuildContext context) {
@@ -154,62 +134,85 @@ class ThumbnailWidget extends StatelessWidget {
         placeholder: kTransparentImage,
         image: _imageUri,
         fit: BoxFit.cover,
-        height: 88.0,
+        height: 72.0,
         width: 88.0,
       ),
-      padding: const EdgeInsets.only(left: 5.0, right: 5.0),
     );
   }
 }
 
-class TextBlockWidget extends StatelessWidget {
-  final String _title;
-  final String _subreddit;
-  final String _poster;
-  final String _posted;
-  final String _commentNo;
+class _ListItem extends ListTile {
+  final double _tileHeight = 88.0;
 
-  TextBlockWidget(this._title, this._subreddit, this._poster, this._posted,
-      this._commentNo);
+  _ListItem({
+    Widget leading,
+    Widget title,
+    Widget subtitle,
+    Widget trailing,
+  }) : super(
+          isThreeLine: true,
+          leading: leading,
+          title: title,
+          subtitle: subtitle,
+          trailing: trailing,
+        );
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        verticalDirection: VerticalDirection.down,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          new Text(
-            '$_subreddit by $_poster',
-            style: TextStyle(
-              fontSize: 10.0,
-              color: Colors.grey,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-          new Container(
-            child: new Text(
-              _title,
-              style: TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
+    return new InkWell(
+      onTap: null,
+      onLongPress: null,
+      child: new Semantics(
+        selected: selected,
+        enabled: enabled,
+        child: new ConstrainedBox(
+          constraints: new BoxConstraints(minHeight: _tileHeight),
+          child: new Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: new UnconstrainedBox(
+              constrainedAxis: Axis.horizontal,
+              child: new SafeArea(
+                top: false,
+                bottom: false,
+                child: new Row(
+                  children: <Widget>[
+                    new Container(
+                      margin: const EdgeInsetsDirectional.only(end: 16.0),
+                      alignment: AlignmentDirectional.centerStart,
+                      child: leading,
+                    ),
+                    new Expanded(
+                      child: new Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          new AnimatedDefaultTextStyle(
+                            child: title,
+                            style: new TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.0,
+                              color: Colors.black87,
+                            ),
+                            duration: kThemeChangeDuration,
+                          ),
+                          new AnimatedDefaultTextStyle(
+                            child: subtitle,
+                            style: new TextStyle(
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
+                              fontSize: 10.0,
+                            ),
+                            duration: kThemeChangeDuration,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-              softWrap: true,
-              maxLines: 10,
-              overflow: TextOverflow.ellipsis,
             ),
           ),
-          new Text(
-            '${_commentNo} comments * ${_posted}',
-            style: TextStyle(
-              fontSize: 10.0,
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
