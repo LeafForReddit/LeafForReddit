@@ -52,7 +52,10 @@ class _FeedItem extends StatelessWidget {
           leading: new _ThumbnailWidget(_feedItemBloc.thumbnailUri),
           title: new Text(_feedItemBloc.title),
           subtitle: new Text(_feedItemBloc.subreddit),
-          trailing: new Text(_feedItemBloc.ups.toString()),
+          trailing: new _TrailingWidget(
+            _feedItemBloc.ups.toString(),
+            _feedItemBloc.commentNo.toString(),
+          ),
         ),
       ),
       actions: <Widget>[
@@ -206,7 +209,12 @@ class _ListItem extends ListTile {
                           )
                         ],
                       ),
-                    )
+                    ),
+                    new Container(
+                      margin: const EdgeInsetsDirectional.only(start: 16.0),
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: trailing,
+                    ),
                   ],
                 ),
               ),
@@ -214,6 +222,56 @@ class _ListItem extends ListTile {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TrailingWidget extends StatelessWidget {
+  final TextStyle textStyle = new TextStyle(
+    fontSize: 11.0,
+    color: Colors.grey,
+  );
+
+  final String _voteScore;
+  final String _commentNo;
+
+  _TrailingWidget(this._voteScore, this._commentNo);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Column(
+      children: <Widget>[
+        new Row(
+          children: <Widget>[
+            new Icon(
+              Icons.arrow_upward,
+              size: 18.0,
+              color: Colors.grey,
+            ),
+            new Text(
+              _voteScore,
+              style: textStyle,
+            ),
+          ],
+        ),
+        new Divider(
+          color: Colors.black,
+          height: 2.0,
+        ),
+        new Row(
+          children: <Widget>[
+            new Icon(
+              Icons.comment,
+              size: 18.0,
+              color: Colors.grey,
+            ),
+            new Text(
+              _commentNo,
+              style: textStyle,
+            ),
+          ],
+        )
+      ],
     );
   }
 }
