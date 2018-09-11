@@ -6,19 +6,15 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  http: ^0.11.3+16
-  flutter_webview_plugin: ^0.1.6
-  secure_string: ^2.0.0
-  shared_preferences: ^0.4.1
   transparent_image: ^0.1.0
-  rxdart: ^0.16.0+2
-  uuid: 1.0.0
+  rxdart: ^0.18.0+2
+  uuid: ^1.0.3
   flutter_slidable: ^0.4.5
 
   reddit:
     git:
       url: git://github.com/LeafForReddit/dart-reddit
-      ref: implicit_flow
+      ref: leaf_build
 
   share:
       git:

@@ -24,8 +24,12 @@ class Feed extends StatelessWidget {
             if (snapshot.hasError) {
               return new Text('Error: ${snapshot.error}');
             } else {
-              return new ListView.builder(
+              return new ListView.separated(
                 itemCount: snapshot.data.length,
+                separatorBuilder: (context, index) => new Divider(
+                      color: Colors.black54,
+                      height: 0.0,
+                    ),
                 itemBuilder: (context, index) =>
                     new _FeedItem(snapshot.data[index]),
               );
