@@ -53,7 +53,9 @@ class _FeedItem extends StatelessWidget {
       child: new Container(
         color: Colors.white,
         child: new _ListItem(
-          leading: new _ThumbnailWidget(_feedItemBloc.thumbnailUri),
+          leading: (!_feedItemBloc.hasThumbnail)
+              ? new _ThumbnailWidget(_feedItemBloc.thumbnailUri)
+              : null,
           title: new Text(_feedItemBloc.title),
           subtitle: new Text(_feedItemBloc.subreddit),
           trailing: new _TrailingWidget(
@@ -69,8 +71,8 @@ class _FeedItem extends StatelessWidget {
         ),
       ],
       secondaryActions: <Widget>[
-        new IconSlideAction(icon: Icons.arrow_downward),
         new IconSlideAction(icon: Icons.arrow_upward),
+        new IconSlideAction(icon: Icons.arrow_downward),
       ],
     );
   }
@@ -78,6 +80,7 @@ class _FeedItem extends StatelessWidget {
 
 class FeedItemBloc {
   static final String _redditUrl = 'www.reddit.com';
+  static final String _defaultThumbnail = 'default';
 
   String title;
   String thumbnailUri;
@@ -111,9 +114,9 @@ class FeedItemBloc {
     return '${diff.toString()} ${(diff == 1) ? 'hour' : 'hours'} ago';
   }
 
-  void share() {
-    new Share.plainText(text: postUrl).share();
-  }
+  bool get hasThumbnail => thumbnailUri == _defaultThumbnail;
+
+  void share() => new Share.plainText(text: postUrl).share();
 }
 
 abstract class _FeedItemKeys {
@@ -182,44 +185,7 @@ class _ListItem extends ListTile {
                 top: false,
                 bottom: false,
                 child: new Row(
-                  children: <Widget>[
-                    new Container(
-                      margin: const EdgeInsetsDirectional.only(end: 16.0),
-                      alignment: AlignmentDirectional.centerStart,
-                      child: leading,
-                    ),
-                    new Expanded(
-                      child: new Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new AnimatedDefaultTextStyle(
-                            child: title,
-                            style: new TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0,
-                              color: Colors.black87,
-                            ),
-                            duration: kThemeChangeDuration,
-                          ),
-                          new AnimatedDefaultTextStyle(
-                            child: subtitle,
-                            style: new TextStyle(
-                              color: Colors.grey,
-                              fontStyle: FontStyle.italic,
-                              fontSize: 10.0,
-                            ),
-                            duration: kThemeChangeDuration,
-                          )
-                        ],
-                      ),
-                    ),
-                    new Container(
-                      margin: const EdgeInsetsDirectional.only(start: 16.0),
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: trailing,
-                    ),
-                  ],
+                  children: _getChildren(),
                 ),
               ),
             ),
@@ -227,6 +193,62 @@ class _ListItem extends ListTile {
         ),
       ),
     );
+  }
+
+  List<Widget> _getChildren() {
+    List<Widget> children = new List();
+
+    // Check if post should have thumbnail
+    if (leading != null) {
+      children.add(
+        new Container(
+          margin: const EdgeInsetsDirectional.only(end: 16.0),
+          alignment: AlignmentDirectional.centerStart,
+          child: leading,
+        ),
+      );
+    }
+
+    // Title + subreddit
+    children.add(
+      new Expanded(
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new AnimatedDefaultTextStyle(
+              child: title,
+              style: new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14.0,
+                color: Colors.black87,
+              ),
+              duration: kThemeChangeDuration,
+            ),
+            new AnimatedDefaultTextStyle(
+              child: subtitle,
+              style: new TextStyle(
+                color: Colors.grey,
+                fontStyle: FontStyle.italic,
+                fontSize: 10.0,
+              ),
+              duration: kThemeChangeDuration,
+            )
+          ],
+        ),
+      ),
+    );
+
+    // Upvotes + comments
+    children.add(
+      new Container(
+        margin: const EdgeInsetsDirectional.only(start: 16.0),
+        alignment: AlignmentDirectional.centerEnd,
+        child: trailing,
+      ),
+    );
+
+    return children;
   }
 }
 
