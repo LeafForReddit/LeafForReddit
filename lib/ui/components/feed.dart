@@ -41,6 +41,8 @@ class Feed extends StatelessWidget {
 }
 
 class _FeedItem extends StatelessWidget {
+  final double _extentRatio = 0.15;
+
   final FeedItemBloc _feedItemBloc;
 
   _FeedItem(this._feedItemBloc);
@@ -49,7 +51,7 @@ class _FeedItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Slidable(
       delegate: new SlidableBehindDelegate(),
-      actionExtentRatio: 0.15,
+      actionExtentRatio: _extentRatio,
       child: new Container(
         color: Colors.white,
         child: new _ListItem(
@@ -140,12 +142,15 @@ class _ThumbnailWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      child: new FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: _imageUri,
-        fit: BoxFit.cover,
-        height: 72.0,
-        width: 88.0,
+      child: new ClipRRect(
+        borderRadius: new BorderRadius.circular(8.0),
+        child: new FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          image: _imageUri,
+          fit: BoxFit.cover,
+          height: 72.0,
+          width: 72.0,
+        ),
       ),
     );
   }
