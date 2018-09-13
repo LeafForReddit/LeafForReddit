@@ -50,8 +50,10 @@ class HomeBloc {
   final _titleSubject = new BehaviorSubject<String>(seedValue: 'Leaf');
   Future<Reddit> _futureReddit;
 
-  HomeBloc(SessionService sessionService, RedditService redditService) {
-    redditService.redditStream.listen((futureReddit) {
+  final RedditService _redditService;
+
+  HomeBloc(SessionService sessionService, this._redditService) {
+    _redditService.redditStream.listen((futureReddit) {
       _futureReddit = futureReddit;
     });
 
@@ -69,7 +71,7 @@ class HomeBloc {
         .fetch()
         .then<List<FeedItemBloc>>((response) {
       return response['data']['children']
-          .map<FeedItemBloc>((child) => new FeedItemBloc(child['data']))
+          .map<FeedItemBloc>((child) => new FeedItemBloc(child['data'], _redditService))
           .toList();
     });
     _feedItemsSubject.add(results);

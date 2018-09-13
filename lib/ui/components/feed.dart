@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:leaf_for_reddit/service/reddit_service.dart';
+import 'package:reddit/reddit.dart';
 import 'package:share/share.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -64,6 +66,7 @@ class _FeedItem extends StatelessWidget {
             _feedItemBloc.ups.toString(),
             _feedItemBloc.commentNo.toString(),
           ),
+          onTap: () => _feedItemBloc.onTap(),
         ),
       ),
       actions: <Widget>[
@@ -84,6 +87,8 @@ class FeedItemBloc {
   static final String _redditUrl = 'www.reddit.com';
   static final String _defaultThumbnail = 'default';
 
+  Future<Reddit> _reddit;
+
   String title;
   String thumbnailUri;
   String poster;
@@ -94,7 +99,9 @@ class FeedItemBloc {
   String commentNo;
   String postUrl;
 
-  FeedItemBloc(Map<String, dynamic> feedItemData) {
+  FeedItemBloc(Map<String, dynamic> feedItemData, RedditService redditService) {
+    redditService.redditStream.listen((reddit) => _reddit = reddit);
+
     title = feedItemData[_FeedItemKeys.title];
     thumbnailUri = feedItemData[_FeedItemKeys.thumbnail];
     poster = feedItemData[_FeedItemKeys.author];
@@ -119,6 +126,21 @@ class FeedItemBloc {
   bool get hasThumbnail => thumbnailUri == _defaultThumbnail;
 
   void share() => new Share.plainText(text: postUrl).share();
+
+  void onTap() async {
+    print('Selected ' + subreddit + id);
+    await _reddit;
+    Reddit reddit = await _reddit;
+
+    // TODO fix library as it doesn't match API
+//    reddit
+//        .sub(subreddit.replaceAll('r/', ''))
+//        .comments(id)
+//        .fetch()
+//        .then((response) {
+//      print(response);
+//    });
+  }
 }
 
 abstract class _FeedItemKeys {
@@ -164,33 +186,37 @@ class _ListItem extends ListTile {
     Widget title,
     Widget subtitle,
     Widget trailing,
+    Function onTap,
   }) : super(
           isThreeLine: true,
           leading: leading,
           title: title,
           subtitle: subtitle,
           trailing: trailing,
+          onTap: onTap,
         );
 
   @override
   Widget build(BuildContext context) {
-    return new InkWell(
-      onTap: null,
-      onLongPress: null,
-      child: new Semantics(
-        selected: selected,
-        enabled: enabled,
-        child: new ConstrainedBox(
-          constraints: new BoxConstraints(minHeight: _tileHeight),
-          child: new Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: new UnconstrainedBox(
-              constrainedAxis: Axis.horizontal,
-              child: new SafeArea(
-                top: false,
-                bottom: false,
-                child: new Row(
-                  children: _getChildren(),
+    return new Material(
+      color: Colors.transparent,
+      child: new InkWell(
+        onTap: onTap,
+        onLongPress: null,
+        child: new Semantics(
+          enabled: enabled,
+          child: new ConstrainedBox(
+            constraints: new BoxConstraints(minHeight: _tileHeight),
+            child: new Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: new UnconstrainedBox(
+                constrainedAxis: Axis.horizontal,
+                child: new SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: new Row(
+                    children: _getChildren(),
+                  ),
                 ),
               ),
             ),
