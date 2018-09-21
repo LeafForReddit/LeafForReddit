@@ -87,7 +87,7 @@ class FeedItemBloc {
   static final String _redditUrl = 'www.reddit.com';
   static final String _defaultThumbnail = 'default';
 
-  Future<Reddit> _reddit;
+  final Function(FeedItemBloc) _onSelect;
 
   String title;
   String thumbnailUri;
@@ -99,9 +99,7 @@ class FeedItemBloc {
   String commentNo;
   String postUrl;
 
-  FeedItemBloc(Map<String, dynamic> feedItemData, RedditService redditService) {
-    redditService.redditStream.listen((reddit) => _reddit = reddit);
-
+  FeedItemBloc(Map<String, dynamic> feedItemData, this._onSelect) {
     title = feedItemData[_FeedItemKeys.title];
     thumbnailUri = feedItemData[_FeedItemKeys.thumbnail];
     poster = feedItemData[_FeedItemKeys.author];
@@ -127,20 +125,7 @@ class FeedItemBloc {
 
   void share() => new Share.plainText(text: postUrl).share();
 
-  void onTap() async {
-    print('Selected ' + subreddit + id);
-    await _reddit;
-    Reddit reddit = await _reddit;
-
-    // TODO fix library as it doesn't match API
-//    reddit
-//        .sub(subreddit.replaceAll('r/', ''))
-//        .comments(id)
-//        .fetch()
-//        .then((response) {
-//      print(response);
-//    });
-  }
+  void onTap() async => _onSelect(this);
 }
 
 abstract class _FeedItemKeys {

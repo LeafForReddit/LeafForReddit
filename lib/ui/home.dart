@@ -6,14 +6,15 @@ import 'package:leaf_for_reddit/service/session_service.dart';
 import 'package:leaf_for_reddit/ui/components/action_bar.dart';
 import 'package:leaf_for_reddit/ui/components/bottom_bar.dart';
 import 'package:leaf_for_reddit/ui/components/feed.dart';
+import 'package:leaf_for_reddit/ui/post_page.dart';
 import 'package:reddit/reddit.dart';
 import 'package:rxdart/subjects.dart';
 
-class Home extends StatelessWidget {
+class HomeWidget extends StatelessWidget {
   final HomeBloc _homeBloc;
   final void Function(BuildContext bContext) _iconButtonAction;
 
-  Home(this._homeBloc, this._iconButtonAction, {Key key}) : super(key: key);
+  HomeWidget(this._homeBloc, this._iconButtonAction, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +52,10 @@ class HomeBloc {
   Future<Reddit> _futureReddit;
 
   final RedditService _redditService;
+  final PostPageBloc postPageBloc;
+  final BuildContext _context;
 
-  HomeBloc(SessionService sessionService, this._redditService) {
+  HomeBloc(this._context, SessionService sessionService, this._redditService, {this.postPageBloc}) {
     _redditService.redditStream.listen((futureReddit) {
       _futureReddit = futureReddit;
     });
@@ -71,10 +74,15 @@ class HomeBloc {
         .fetch()
         .then<List<FeedItemBloc>>((response) {
       return response['data']['children']
-          .map<FeedItemBloc>((child) => new FeedItemBloc(child['data'], _redditService))
+          .map<FeedItemBloc>((child) => new FeedItemBloc(child['data'], _openPost))
           .toList();
     });
     _feedItemsSubject.add(results);
+  }
+
+  void _openPost(FeedItemBloc feedItemBloc) {
+    postPageBloc.next(feedItemBloc);
+    Navigator.pushNamed(_context, '/post');
   }
 
   Stream<String> get title => _titleSubject.stream;
