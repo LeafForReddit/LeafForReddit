@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:leaf_for_reddit/service/reddit_service.dart';
-import 'package:reddit/reddit.dart';
 import 'package:share/share.dart';
 import 'package:transparent_image/transparent_image.dart';
 
