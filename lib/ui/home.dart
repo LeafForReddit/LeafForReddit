@@ -23,7 +23,11 @@ class HomeWidget extends StatefulWidget {
   State<StatefulWidget> createState() => new _HomeWidgetState();
 }
 
-class _HomeWidgetState extends State<HomeWidget> with AfterLayoutMixin<HomeWidget>{
+class _HomeWidgetState extends State<HomeWidget>
+    with
+        AfterLayoutMixin<HomeWidget>,
+        SingleTickerProviderStateMixin<HomeWidget> {
+  AnimationController _appBarsController;
   AnimatedAppBar _appBar;
   Feed _feed;
   AnimatedBottomAppBar _bottomAppBar;
@@ -31,6 +35,11 @@ class _HomeWidgetState extends State<HomeWidget> with AfterLayoutMixin<HomeWidge
   @override
   void initState() {
     super.initState();
+
+    _appBarsController = new AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
 
     _appBar = new AnimatedAppBar(
       new StreamBuilder(
@@ -45,11 +54,14 @@ class _HomeWidgetState extends State<HomeWidget> with AfterLayoutMixin<HomeWidge
             ),
             onPressed: () => widget._iconButtonAction(context))
       ],
+      controller: _appBarsController,
     );
 
     _feed = new Feed(widget._homeBloc.feedItems);
 
-    _bottomAppBar = new AnimatedBottomAppBar();
+    _bottomAppBar = new AnimatedBottomAppBar(
+      controller: _appBarsController,
+    );
   }
 
   @override
@@ -67,8 +79,7 @@ class _HomeWidgetState extends State<HomeWidget> with AfterLayoutMixin<HomeWidge
 
   @override
   void afterFirstLayout(BuildContext context) {
-    _appBar.hidden = false;
-    _bottomAppBar.hidden = false;
+    _appBarsController.forward();
   }
 }
 
@@ -119,4 +130,3 @@ class HomeBloc {
 
   Stream<List<FeedItemBloc>> get feedItems => _feedItemsSubject.stream;
 }
-
