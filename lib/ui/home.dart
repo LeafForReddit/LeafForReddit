@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:leaf_for_reddit/service/reddit_service.dart';
 import 'package:leaf_for_reddit/service/session_service.dart';
 import 'package:leaf_for_reddit/ui/components/action_bar.dart';
+import 'package:leaf_for_reddit/ui/components/app_bar.dart';
 import 'package:leaf_for_reddit/ui/components/bottom_bar.dart';
 import 'package:leaf_for_reddit/ui/components/feed.dart';
 import 'package:leaf_for_reddit/ui/post_page.dart';
@@ -25,6 +26,7 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> with AfterLayoutMixin<HomeWidget>{
   AnimatedAppBar _appBar;
   Feed _feed;
+  AnimatedBottomAppBar _bottomAppBar;
 
   @override
   void initState() {
@@ -46,6 +48,8 @@ class _HomeWidgetState extends State<HomeWidget> with AfterLayoutMixin<HomeWidge
     );
 
     _feed = new Feed(widget._homeBloc.feedItems);
+
+    _bottomAppBar = new AnimatedBottomAppBar();
   }
 
   @override
@@ -57,13 +61,14 @@ class _HomeWidgetState extends State<HomeWidget> with AfterLayoutMixin<HomeWidge
       ),
       floatingActionButton: new ActionBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: new BottomBarWidget(),
+      bottomNavigationBar: _bottomAppBar,
     );
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
     _appBar.hidden = false;
+    _bottomAppBar.hidden = false;
   }
 }
 
@@ -115,75 +120,3 @@ class HomeBloc {
   Stream<List<FeedItemBloc>> get feedItems => _feedItemsSubject.stream;
 }
 
-class AnimatedAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final AppBar _child;
-  final _hidden = BehaviorSubject<bool>();
-
-  AnimatedAppBar(Widget title, List<Widget> actions)
-      : _child = new AppBar(
-          centerTitle: true,
-          title: title,
-          actions: actions,
-        );
-
-  @override
-  State<StatefulWidget> createState() => new _AnimatedAppBarState(_child);
-
-  @override
-  Size get preferredSize => _child.preferredSize;
-
-  set hidden(bool hidden) => _hidden.add(hidden);
-
-  Stream<bool> get hiddenStream => _hidden.stream;
-
-  void dispose() {
-    _hidden.close();
-  }
-}
-
-class _AnimatedAppBarState extends State<AnimatedAppBar>
-    with SingleTickerProviderStateMixin {
-  static final Animatable<Offset> _positionTween = Tween<Offset>(
-    begin: const Offset(0.0, -1.0),
-    end: Offset.zero,
-  ).chain(CurveTween(curve: Curves.easeInOut));
-
-  AnimationController _controller;
-
-  Widget child;
-
-  bool _hidden = true;
-
-  _AnimatedAppBarState(this.child);
-
-  @override
-  void initState() {
-    super.initState();
-    widget.hiddenStream.listen(_transition);
-    _controller = new AnimationController(
-      duration: const Duration(milliseconds: 2400),
-      vsync: this,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new SlideTransition(
-      position: _positionTween.animate(_controller),
-      child: child,
-    );
-  }
-
-  void _transition(bool hidden) {
-    if (hidden != _hidden) {
-      _hidden = hidden;
-      if (hidden) {
-        print('Playing animation reverse');
-//        _controller.reverse();
-      } else {
-        print('Playing animation forward');
-        _controller.forward();
-      }
-    }
-  }
-}
