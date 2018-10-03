@@ -20,11 +20,7 @@ class PostPageWidget extends StatelessWidget {
 class PostPageBloc {
   FeedItemBloc _feedItemBloc;
 
-  PostPageBloc();
-
-  void next(FeedItemBloc feedItemBloc) {
-    _feedItemBloc = feedItemBloc;
-  }
+  PostPageBloc.fromFeedItem(this._feedItemBloc);
 
   String get title => _feedItemBloc.title ?? '';
 }

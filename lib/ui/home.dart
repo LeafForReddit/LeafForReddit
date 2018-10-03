@@ -57,7 +57,7 @@ class _HomeWidgetState extends State<HomeWidget>
       controller: _appBarsController,
     );
 
-    _feed = new Feed(widget._homeBloc.feedItems);
+    _feed = new Feed(widget._homeBloc.feedItems, _feedItemSelected);
 
     _bottomAppBar = new AnimatedBottomAppBar(
       controller: _appBarsController,
@@ -81,6 +81,17 @@ class _HomeWidgetState extends State<HomeWidget>
   void afterFirstLayout(BuildContext context) {
     _appBarsController.forward();
   }
+
+  void _feedItemSelected(FeedItemBloc selectedItem) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => new PostPageWidget(
+              new PostPageBloc.fromFeedItem(selectedItem),
+            ),
+      ),
+    );
+  }
 }
 
 class HomeBloc {
@@ -90,11 +101,8 @@ class HomeBloc {
   Future<Reddit> _futureReddit;
 
   final RedditService _redditService;
-  final PostPageBloc postPageBloc;
-  final BuildContext _context;
 
-  HomeBloc(this._context, SessionService sessionService, this._redditService,
-      {this.postPageBloc}) {
+  HomeBloc(SessionService sessionService, this._redditService) {
     _redditService.redditStream.listen((futureReddit) {
       _futureReddit = futureReddit;
     });
@@ -113,17 +121,10 @@ class HomeBloc {
         .fetch()
         .then<List<FeedItemBloc>>((response) {
       return response['data']['children']
-          .map<FeedItemBloc>(
-              (child) => new FeedItemBloc(child['data'], _openPost))
+          .map<FeedItemBloc>((child) => new FeedItemBloc(child['data']))
           .toList();
     });
     _feedItemsSubject.add(results);
-  }
-
-  // TODO: Move to HomeWidget since this is UI logic
-  void _openPost(FeedItemBloc feedItemBloc) {
-    postPageBloc.next(feedItemBloc);
-    Navigator.pushNamed(_context, '/post');
   }
 
   Stream<String> get title => _titleSubject.stream;

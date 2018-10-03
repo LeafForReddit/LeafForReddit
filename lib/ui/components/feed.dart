@@ -7,8 +7,9 @@ import 'package:transparent_image/transparent_image.dart';
 
 class Feed extends StatelessWidget {
   final Stream<List<FeedItemBloc>> _items;
+  final Function(FeedItemBloc) _itemSelectedCallback;
 
-  Feed(this._items);
+  Feed(this._items, this._itemSelectedCallback);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class Feed extends StatelessWidget {
                       height: 0.0,
                     ),
                 itemBuilder: (context, index) =>
-                    new _FeedItem(snapshot.data[index]),
+                    new _FeedItem(snapshot.data[index], _itemSelectedCallback),
               );
             }
         }
@@ -45,7 +46,9 @@ class _FeedItem extends StatelessWidget {
 
   final FeedItemBloc _feedItemBloc;
 
-  _FeedItem(this._feedItemBloc);
+  final Function(FeedItemBloc) _onTapCallback;
+
+  _FeedItem(this._feedItemBloc, this._onTapCallback);
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +67,7 @@ class _FeedItem extends StatelessWidget {
             _feedItemBloc.ups.toString(),
             _feedItemBloc.commentNo.toString(),
           ),
-          onTap: () => _feedItemBloc.onTap(),
+          onTap: () => _onTapCallback(_feedItemBloc),
         ),
       ),
       actions: <Widget>[
@@ -85,8 +88,6 @@ class FeedItemBloc {
   static final String _redditUrl = 'www.reddit.com';
   static final String _defaultThumbnail = 'default';
 
-  final Function(FeedItemBloc) _onSelect;
-
   String title;
   String thumbnailUri;
   String poster;
@@ -97,7 +98,7 @@ class FeedItemBloc {
   String commentNo;
   String postUrl;
 
-  FeedItemBloc(Map<String, dynamic> feedItemData, this._onSelect) {
+  FeedItemBloc(Map<String, dynamic> feedItemData) {
     title = feedItemData[_FeedItemKeys.title];
     thumbnailUri = feedItemData[_FeedItemKeys.thumbnail];
     poster = feedItemData[_FeedItemKeys.author];
@@ -122,8 +123,6 @@ class FeedItemBloc {
   bool get hasThumbnail => thumbnailUri == _defaultThumbnail;
 
   void share() => new Share.plainText(text: postUrl).share();
-
-  void onTap() async => _onSelect(this);
 }
 
 abstract class _FeedItemKeys {
