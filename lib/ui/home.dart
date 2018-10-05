@@ -8,6 +8,7 @@ import 'package:leaf_for_reddit/ui/components/action_bar.dart';
 import 'package:leaf_for_reddit/ui/components/app_bar.dart';
 import 'package:leaf_for_reddit/ui/components/bottom_bar.dart';
 import 'package:leaf_for_reddit/ui/components/feed.dart';
+import 'package:leaf_for_reddit/ui/components/util/scroll_direction.dart';
 import 'package:leaf_for_reddit/ui/post_page.dart';
 import 'package:reddit/reddit.dart';
 import 'package:rxdart/subjects.dart';
@@ -31,6 +32,7 @@ class _HomeWidgetState extends State<HomeWidget>
   AnimatedAppBar _appBar;
   Feed _feed;
   AnimatedBottomAppBar _bottomAppBar;
+  bool _appBarsVisible = true;
 
   @override
   void initState() {
@@ -59,6 +61,8 @@ class _HomeWidgetState extends State<HomeWidget>
 
     _feed = new Feed(widget._homeBloc.feedItems, _feedItemSelected);
 
+    _feed.scrollDirection.listen(_handleScrollDirectionChange);
+
     _bottomAppBar = new AnimatedBottomAppBar(
       controller: _appBarsController,
     );
@@ -67,13 +71,13 @@ class _HomeWidgetState extends State<HomeWidget>
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: _appBar,
+      appBar: (_appBarsVisible) ? _appBar : null,
       body: new Center(
         child: _feed,
       ),
       floatingActionButton: new ActionBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _bottomAppBar,
+      bottomNavigationBar: (_appBarsVisible) ? _bottomAppBar : null,
     );
   }
 
@@ -91,6 +95,24 @@ class _HomeWidgetState extends State<HomeWidget>
             ),
       ),
     );
+  }
+
+  void _handleScrollDirectionChange(ScrollDirection direction) {
+    print(direction);
+    _appBarsController.duration = const Duration(milliseconds: 200);
+    if (direction == ScrollDirection.down) {
+      // Hide appbars
+      if (_appBarsVisible) {
+        setState(() => _appBarsVisible = !_appBarsVisible);
+      }
+      _appBarsController.reverse();
+    } else if (direction == ScrollDirection.up) {
+      // Unhide appbars
+      if (!_appBarsVisible) {
+        setState(() => _appBarsVisible = !_appBarsVisible);
+      }
+      _appBarsController.forward();
+    }
   }
 }
 

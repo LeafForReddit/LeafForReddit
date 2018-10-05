@@ -2,19 +2,38 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:leaf_for_reddit/ui/components/util/scroll_direction.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:share/share.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class Feed extends StatelessWidget {
+class Feed extends StatefulWidget {
   final Stream<List<FeedItemBloc>> _items;
   final Function(FeedItemBloc) _itemSelectedCallback;
 
+  final _scrollDirection = new BehaviorSubject<ScrollDirection>();
+
+  @override
+  State<StatefulWidget> createState() => new _FeedState();
+
   Feed(this._items, this._itemSelectedCallback);
+
+  Stream<ScrollDirection> get scrollDirection => _scrollDirection.stream;
+
+  void dispose() {
+    _scrollDirection.close();
+  }
+}
+
+class _FeedState extends State<Feed> with ScrollDirectionDetectorMixin {
+  @override
+  set scrollState(ScrollDirection direction) =>
+      widget._scrollDirection.add(direction);
 
   @override
   Widget build(BuildContext context) {
     return new StreamBuilder(
-      stream: _items,
+      stream: widget._items,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -25,19 +44,28 @@ class Feed extends StatelessWidget {
             if (snapshot.hasError) {
               return new Text('Error: ${snapshot.error}');
             } else {
-              return new ListView.separated(
-                itemCount: snapshot.data.length,
-                separatorBuilder: (context, index) => new Divider(
-                      color: Colors.black54,
-                      height: 0.0,
-                    ),
-                itemBuilder: (context, index) =>
-                    new _FeedItem(snapshot.data[index], _itemSelectedCallback),
+              return new NotificationListener<ScrollNotification>(
+                onNotification: notificationHandler,
+                child: new ListView.separated(
+                  itemCount: snapshot.data.length,
+                  separatorBuilder: (context, index) => new Divider(
+                        color: Colors.black54,
+                        height: 0.0,
+                      ),
+                  itemBuilder: (context, index) => new _FeedItem(
+                      snapshot.data[index], widget._itemSelectedCallback),
+                ),
               );
             }
         }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.dispose();
   }
 }
 
@@ -84,6 +112,7 @@ class _FeedItem extends StatelessWidget {
   }
 }
 
+// TODO: Consider renaming since this doesn't consist of streams and therefore isn't a bloc
 class FeedItemBloc {
   static final String _redditUrl = 'www.reddit.com';
   static final String _defaultThumbnail = 'default';
@@ -122,6 +151,7 @@ class FeedItemBloc {
 
   bool get hasThumbnail => thumbnailUri == _defaultThumbnail;
 
+  // TODO: Move outside this class
   void share() => new Share.plainText(text: postUrl).share();
 }
 
