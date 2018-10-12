@@ -34,6 +34,8 @@ class _HomeWidgetState extends State<HomeWidget>
   AnimatedBottomAppBar _bottomAppBar;
   bool _appBarsVisible = true;
 
+  FloatingActionButton _fab;
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +48,7 @@ class _HomeWidgetState extends State<HomeWidget>
     _appBar = new AnimatedAppBar(
       new StreamBuilder(
         stream: widget._homeBloc.title,
-        builder: (context, snapshot) => new Text(snapshot.data),
+        builder: (context, snapshot) => new Text(snapshot.data ?? ''),
       ),
       <Widget>[
         new IconButton(
@@ -66,18 +68,24 @@ class _HomeWidgetState extends State<HomeWidget>
     _bottomAppBar = new AnimatedBottomAppBar(
       controller: _appBarsController,
     );
+
+    _fab = new FloatingActionButton(
+      onPressed: () => null,
+      child: const Icon(Icons.menu),
+      backgroundColor: Colors.green,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: (_appBarsVisible) ? _appBar : null,
+      appBar: _appBar,
       body: new Center(
         child: _feed,
       ),
-      floatingActionButton: new ActionBar(),
+      floatingActionButton: (_appBarsVisible) ? _fab : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: (_appBarsVisible) ? _bottomAppBar : null,
+      bottomNavigationBar: _bottomAppBar,
     );
   }
 

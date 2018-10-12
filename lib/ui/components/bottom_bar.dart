@@ -14,6 +14,7 @@ class AnimatedBottomAppBar extends StatelessWidget {
   // TODO: Get children list from parent
   AnimatedBottomAppBar({this.controller})
       : _child = new BottomAppBar(
+          shape: CircularNotchedRectangle(),
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.max,
@@ -26,10 +27,12 @@ class AnimatedBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new SlideTransition(
-      position: _positionTween.animate(controller),
-      child: _child,
-    );
+    return (controller != null)
+        ? new SlideTransition(
+            position: _positionTween.animate(controller),
+            child: _child,
+          )
+        : _child;
   }
 }
 

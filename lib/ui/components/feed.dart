@@ -12,6 +12,7 @@ class Feed extends StatefulWidget {
   final Function(FeedItemBloc) _itemSelectedCallback;
 
   final _scrollDirection = new BehaviorSubject<ScrollDirection>();
+  final _offset = new BehaviorSubject<double>();
 
   @override
   State<StatefulWidget> createState() => new _FeedState();
@@ -20,8 +21,11 @@ class Feed extends StatefulWidget {
 
   Stream<ScrollDirection> get scrollDirection => _scrollDirection.stream;
 
+  Stream<double> get offset => _offset.stream;
+
   void dispose() {
     _scrollDirection.close();
+    _offset.close();
   }
 }
 
@@ -29,6 +33,12 @@ class _FeedState extends State<Feed> with ScrollDirectionDetectorMixin {
   @override
   set scrollState(ScrollDirection direction) =>
       widget._scrollDirection.add(direction);
+
+  @override
+  set position(double position) {
+    super.position = position;
+    widget._offset.add(position);
+  }
 
   @override
   Widget build(BuildContext context) {

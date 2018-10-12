@@ -5,7 +5,7 @@ import 'package:leaf_for_reddit/service/session_service.dart';
 import 'package:rxdart/subjects.dart';
 
 class UserPageWidget extends StatelessWidget {
-  UserPageBloc _userPageBloc;
+  final UserPageBloc _userPageBloc;
 
   UserPageWidget(this._userPageBloc);
 

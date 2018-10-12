@@ -12,6 +12,11 @@ class SessionService {
   Stream<String> get currentSubreddit => _currentSubredditSubject.stream;
 
   Stream<User> get currentUser => _currentUserSubject.stream;
+
+  void dispose() {
+    _currentUserSubject.close();
+    _currentSubredditSubject.close();
+  }
 }
 
 class User {

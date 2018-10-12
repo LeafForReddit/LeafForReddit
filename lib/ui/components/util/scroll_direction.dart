@@ -1,21 +1,21 @@
 import 'package:flutter/widgets.dart';
 
 abstract class ScrollDirectionDetectorMixin {
-  double _position;
+  double position;
   ScrollDirection _currentScrollState = ScrollDirection.still;
   set scrollState(ScrollDirection direction);
 
   bool notificationHandler(ScrollNotification notification) {
     if (notification is ScrollStartNotification) {
-      _position = notification.metrics.extentBefore;
+      position = notification.metrics.pixels;
       return true;
     } else if (notification is ScrollUpdateNotification) {
-      var newPosition = notification.metrics.extentBefore;
+      var newPosition = notification.metrics.pixels;
       ScrollDirection scrollDirection;
-      if (_position > newPosition) {
-        scrollDirection = ScrollDirection.up;
-      } else {
+      if (newPosition > position) {
         scrollDirection = ScrollDirection.down;
+      } else {
+        scrollDirection = ScrollDirection.up;
       }
 
       if (scrollDirection != _currentScrollState) {
@@ -23,7 +23,7 @@ abstract class ScrollDirectionDetectorMixin {
         scrollState = _currentScrollState;
       }
 
-      _position = newPosition;
+      position = newPosition;
       return true;
     } else if (notification is ScrollEndNotification) {
       _currentScrollState = ScrollDirection.still;
